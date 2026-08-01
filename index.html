@@ -473,7 +473,7 @@
       <div class="book" id="book">
         <div class="book-spine" id="bookSpine"></div>
 
-        <!-- Page 1: Kapak (front) / İlk iç sayfa (back) -->
+        <!-- Page 1 -->
         <div class="page" id="page1" style="z-index: 4;">
           <div class="page-front cover-front">
             <div class="bookmark"></div>
@@ -495,7 +495,7 @@
           </div>
         </div>
 
-        <!-- Page 2: İç sayfa (front) / Son sayfa (back) -->
+        <!-- Page 2 -->
         <div class="page" id="page2" style="z-index: 3;">
           <div class="page-front">
             <div class="page-header-row">
@@ -552,20 +552,15 @@
     }
 
     function getMaxPages() {
-      return isMobileMode() ? 3 : 2; // Mobile has 4 states (0,1,2,3), Desktop has 3 states (0,1,2)
+      return isMobileMode() ? 3 : 2;
     }
 
-    // Adjust scale and pan
     function adjustBookScale(targetHalf) {
       const vw = viewport.clientWidth;
       const vh = viewport.clientHeight;
       const mobile = isMobileMode();
 
-      const baseW = 680;
       const baseH = 460;
-
-      // On mobile we want to fit one page (340px) on screen.
-      // On desktop we want to fit both pages (680px) on screen
       const fitW = mobile ? 340 : 680;
 
       const maxW = vw - 20;
@@ -578,16 +573,15 @@
       if (scale > 1.3) scale = 1.3;
       if (scale < 0.35) scale = 0.35;
 
-      // Panning logic to center the target half
       let shiftPx = 0;
-      const halfPage = 170; // 340 / 2
+      const halfPage = 170;
       
       if (targetHalf === 'left') {
-        shiftPx = halfPage; // Slide right to center left page
+        shiftPx = halfPage;
       } else if (targetHalf === 'right') {
-        shiftPx = -halfPage; // Slide left to center right page
+        shiftPx = -halfPage;
       } else {
-        shiftPx = 0; // Center the whole spread
+        shiftPx = 0;
       }
 
       bookContainer.style.transform = `scale(${scale}) translateX(${shiftPx}px)`;
@@ -600,48 +594,44 @@
       let targetHalf = 'right';
 
       if (mobile) {
-        // MOBILE LOGIC: 4 States
         if (currentPage === 0) {
           p1Rot = 0; p2Rot = 0; p1Z = 4; p2Z = 1;
-          targetHalf = 'right'; // Show Cover
+          targetHalf = 'right';
           pageIndicator.innerText = 'Kapak';
         } else if (currentPage === 1) {
           p1Rot = -180; p2Rot = 0; p1Z = 3; p2Z = 4;
-          targetHalf = 'left'; // Show Page 1 Back
+          targetHalf = 'left';
           pageIndicator.innerText = 'Sayfa 1';
         } else if (currentPage === 2) {
           p1Rot = -180; p2Rot = 0; p1Z = 3; p2Z = 4;
-          targetHalf = 'right'; // Show Page 2 Front
+          targetHalf = 'right';
           pageIndicator.innerText = 'Sayfa 2';
         } else if (currentPage === 3) {
           p1Rot = -180; p2Rot = -180; p1Z = 1; p2Z = 4;
-          targetHalf = 'left'; // Show Page 2 Back
+          targetHalf = 'left';
           pageIndicator.innerText = 'Son Sayfa';
         }
       } else {
-        // DESKTOP LOGIC: 3 States
         if (currentPage === 0) {
           p1Rot = 0; p2Rot = 0; p1Z = 4; p2Z = 1;
-          targetHalf = 'right'; // Show Cover
+          targetHalf = 'right';
           pageIndicator.innerText = 'Kapak';
         } else if (currentPage === 1) {
           p1Rot = -180; p2Rot = 0; p1Z = 3; p2Z = 4;
-          targetHalf = 'center'; // Show Spread
+          targetHalf = 'center';
           pageIndicator.innerText = 'Sayfa 1 - 2';
         } else if (currentPage === 2) {
           p1Rot = -180; p2Rot = -180; p1Z = 1; p2Z = 4;
-          targetHalf = 'left'; // Show Back Cover
+          targetHalf = 'left';
           pageIndicator.innerText = 'Son Sayfa';
         }
       }
 
-      // Apply rotations
       page1.style.transform = `rotateY(${p1Rot}deg)`;
       page2.style.transform = `rotateY(${p2Rot}deg)`;
       page1.style.zIndex = p1Z;
       page2.style.zIndex = p2Z;
 
-      // Handle Base Pages & Spine visibility
       if (currentPage === 0 || currentPage === getMaxPages()) {
         baseLeft.classList.add('hidden');
         baseRight.classList.add('hidden');
