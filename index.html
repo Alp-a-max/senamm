@@ -46,7 +46,7 @@
       position: relative;
     }
 
-    /* ===== PARTICLES ===== */
+    /* Tanecikler */
     .bg-particles {
       position: fixed;
       top: 0; left: 0;
@@ -71,7 +71,7 @@
       100% { transform: translateY(-10vh) rotate(360deg) scale(1.2); opacity: 0; }
     }
 
-    /* ===== HEADER ===== */
+    /* Başlık */
     header {
       z-index: 2;
       text-align: center;
@@ -95,7 +95,6 @@
       margin-top: 2px;
     }
 
-    /* ===== VIEWPORT ===== */
     .viewport {
       flex: 1;
       width: 100%;
@@ -109,10 +108,6 @@
       overflow: hidden;
     }
 
-    /* ===== BOOK CONTAINER =====
-       Desktop: 680×460 (landscape, two-page spread)
-       Mobile:  340×500 (portrait, single page at a time)
-       Dimensions set by JS based on screen width */
     .book-container {
       position: relative;
       transform-style: preserve-3d;
@@ -126,7 +121,6 @@
       transform-style: preserve-3d;
     }
 
-    /* Spine shadow */
     .book-spine {
       position: absolute;
       left: 50%;
@@ -149,7 +143,6 @@
       opacity: 0.7;
     }
 
-    /* ===== PAGES ===== */
     .page {
       position: absolute;
       height: 100%;
@@ -162,7 +155,6 @@
       user-select: none;
     }
 
-    /* Base pages */
     .base-page-left, .base-page-right {
       position: absolute;
       height: 100%;
@@ -192,7 +184,6 @@
       pointer-events: none;
     }
 
-    /* Page faces */
     .page-front, .page-back {
       position: absolute;
       width: 100%;
@@ -218,7 +209,6 @@
       box-shadow: inset -15px 0 25px rgba(0,0,0,0.07), 0 8px 22px rgba(0,0,0,0.3);
     }
 
-    /* ===== COVER STYLES ===== */
     .cover-front {
       background: linear-gradient(145deg, var(--navy-dark), var(--navy-deep)) !important;
       color: #e0e8f5;
@@ -280,7 +270,6 @@
       box-shadow: 0 2px 10px rgba(212, 175, 55, 0.2);
     }
 
-    /* ===== INNER PAGE CONTENT ===== */
     .page-header-row {
       display: flex;
       justify-content: space-between;
@@ -334,13 +323,10 @@
       padding-top: 10px;
     }
 
-    /* Bookmark */
     .bookmark {
       position: absolute;
-      top: -5px;
-      right: 25px;
-      width: 22px;
-      height: 85px;
+      top: -5px; right: 25px;
+      width: 22px; height: 85px;
       background: var(--gold-primary);
       box-shadow: 0 4px 8px rgba(0,0,0,0.4);
       border-radius: 0 0 4px 4px;
@@ -355,7 +341,6 @@
       border-top: 10px solid var(--gold-primary);
     }
 
-    /* Heart */
     .heart-icon {
       color: #e74c3c;
       display: inline-block;
@@ -367,7 +352,6 @@
       50% { transform: scale(1.2); }
     }
 
-    /* ===== CONTROLS ===== */
     .controls-wrapper {
       z-index: 5;
       display: flex;
@@ -471,7 +455,6 @@
       <div class="book" id="book">
         <div class="book-spine" id="bookSpine"></div>
 
-        <!-- Page 1: Kapak (front) / İlk iç sayfa (back) -->
         <div class="page" id="page1" style="z-index: 4;">
           <div class="page-front cover-front">
             <div class="bookmark"></div>
@@ -493,7 +476,6 @@
           </div>
         </div>
 
-        <!-- Page 2: İç sayfa (front) / Son sayfa (back) -->
         <div class="page" id="page2" style="z-index: 3;">
           <div class="page-front">
             <div class="page-header-row">
@@ -546,14 +528,10 @@
     const baseLeft = document.getElementById('baseLeft');
     const baseRight = document.getElementById('baseRight');
 
-    // ===== LAYOUT MODE =====
-    // Mobile (<600px): portrait single-page (340×500)
-    // Desktop (≥600px): landscape two-page spread (680×460)
     function isMobileMode() {
       return window.innerWidth < 600;
     }
 
-    // Book base dimensions (before scaling)
     function getBookDimensions() {
       if (isMobileMode()) {
         return { w: 340, h: 500, pageWidth: '100%' };
@@ -566,19 +544,15 @@
       const dim = getBookDimensions();
       const mobile = isMobileMode();
 
-      // Set book container size
       bookContainer.style.width = dim.w + 'px';
       bookContainer.style.height = dim.h + 'px';
 
-      // Set page widths
       page1.style.width = dim.pageWidth;
       page2.style.width = dim.pageWidth;
 
-      // Set base page widths
       baseLeft.style.width = dim.pageWidth;
       baseRight.style.width = dim.pageWidth;
 
-      // On mobile: always hide base pages & spine (single page view)
       if (mobile) {
         baseLeft.classList.add('hidden');
         baseRight.classList.add('hidden');
@@ -595,7 +569,6 @@
       let effectiveW = dim.w;
       let effectiveH = dim.h;
 
-      // On desktop, for cover/last page only half the book is visible
       if (!mobile && (currentPage === 0 || currentPage === totalPageFlips)) {
         effectiveW = dim.w / 2;
       }
@@ -607,7 +580,6 @@
       const scaleY = maxH / effectiveH;
       let scale = Math.min(scaleX, scaleY);
 
-      // On desktop, cap so the full book doesn't massively overflow
       if (!mobile && (currentPage === 0 || currentPage === totalPageFlips)) {
         const maxFullScale = (vw - 10) / dim.w;
         scale = Math.min(scale, maxFullScale * 1.5);
@@ -616,7 +588,6 @@
       if (scale > 1.2) scale = 1.2;
       if (scale < 0.35) scale = 0.35;
 
-      // Desktop: shift container to center the visible half
       let shiftPx = 0;
       if (!mobile) {
         const halfBookScaled = (dim.w / 2) * scale;
@@ -636,13 +607,6 @@
       applyLayout();
 
       if (mobile) {
-        // ===== MOBILE: single page view =====
-        // Each "page flip" shows the next face.
-        // page 0 → page1 front (cover)
-        // page 1 → page1 flipped (shows page1-back)
-        // page 2 → page2 flipped (shows page2-back = last page)
-        // But since pages are 100% width and stacked, we just flip them.
-
         if (currentPage === 0) {
           page1.style.transform = 'rotateY(0deg)';
           page2.style.transform = 'rotateY(0deg)';
@@ -664,7 +628,6 @@
         }
 
       } else {
-        // ===== DESKTOP: two-page spread =====
         if (currentPage === 0) {
           page1.style.transform = 'rotateY(0deg)';
           page2.style.transform = 'rotateY(0deg)';
@@ -717,20 +680,17 @@
       }
     }
 
-    // Click to turn
     page1.addEventListener('click', () => { if (currentPage === 0) nextPage(); });
     page2.addEventListener('click', () => {
       if (currentPage === 1) nextPage();
       else if (currentPage === 2) prevPage();
     });
 
-    // Keyboard
     window.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowRight' || e.key === ' ') nextPage();
       else if (e.key === 'ArrowLeft') prevPage();
     });
 
-    // Touch swipe
     let touchStartX = 0;
     viewport.addEventListener('touchstart', (e) => {
       touchStartX = e.changedTouches[0].screenX;
@@ -741,11 +701,9 @@
       else if (diff > 40) prevPage();
     }, { passive: true });
 
-    // Resize → re-layout
     window.addEventListener('resize', () => updatePages());
     window.addEventListener('load', () => updatePages());
 
-    // Particles
     const particlesContainer = document.getElementById('particlesContainer');
     const symbols = ['✦', '✧', '•', '★', '♥', '🌸'];
     for (let i = 0; i < 26; i++) {
